@@ -20,5 +20,5 @@ int main(int argc, char* argv[]) {
     std::getline(std::cin, inputLine);
 
     PatternMatcher patternMatcher(inputLine, pattern);
-    return patternMatcher.Match();
+    return !patternMatcher.Match();
 }
