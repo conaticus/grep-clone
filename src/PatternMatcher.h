@@ -3,9 +3,13 @@
 class PatternMatcher
 {
 public:
-    PatternMatcher(std::string input, std::string pattern) : input(input), pattern(pattern) {}
+    PatternMatcher(const std::string& input, const std::string& pattern) : input(input), pattern(pattern) {}
     bool Match();
+    void ParseExpression(const std::string& expression);
 private:
-    std::string input;
-    std::string pattern;
+    const std::string input;
+    const std::string pattern;
+
+    bool matchDigits = false;
+    char matchChar = '\0';
 };

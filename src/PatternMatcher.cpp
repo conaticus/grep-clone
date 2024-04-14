@@ -5,8 +5,31 @@
 bool PatternMatcher::Match() {
     if (input.length() == 0) return false;
 
-    bool doesMatch = input.find(pattern) != std::string::npos;
-    std::cout << (doesMatch ? "Match!" : "No match.") << std::endl;
+    ParseExpression(pattern);
+    
+    for (size_t i = 0; i < input.length(); i++) {
+        char ch = input[i];
 
-    return doesMatch;
+        if (
+            (matchDigits && isdigit(ch)) ||
+            ch == matchChar
+        )
+            return true;
+    }
+
+    return false;
+}
+
+void PatternMatcher::ParseExpression(const std::string& expression) {
+    if (expression[0] == '\\' && expression.length() == 2) {
+        switch (expression[1]) {
+            case 'd':
+                matchDigits = true;
+                return;
+            default: break;
+        }
+    }
+
+    if (expression.length() == 1)
+        matchChar = expression[0];
 }
