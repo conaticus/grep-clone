@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.13)
-project(git-starter-cpp)
-set(CMAKE_CXX_STANDARD 20) # Enable the C++20 standard
+project(grep)
+set(CMAKE_CXX_STANDARD 20)
 
-set(SOURCE_FILES src/Server.cpp)
-
-add_executable(server ${SOURCE_FILES})
+set(SOURCE_FILES src/main.cpp)
+add_executable(main ${SOURCE_FILES})
