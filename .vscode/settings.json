@@ -42,6 +42,9 @@
     "xmemory": "cpp",
     "xstddef": "cpp",
     "xtr1common": "cpp",
-    "xutility": "cpp"
+    "xutility": "cpp",
+    "list": "cpp",
+    "vector": "cpp",
+    "xhash": "cpp"
   }
 }

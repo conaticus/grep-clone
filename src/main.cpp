@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include "PatternMatcher.h"
+#include "Pattern.h"
 
 int main(int argc, char* argv[]) {
     if (argc != 3) {
@@ -9,7 +9,7 @@ int main(int argc, char* argv[]) {
     }
 
     std::string flag = argv[1];
-    std::string pattern = argv[2];
+    std::string patternRaw = argv[2];
 
     if (flag != "-E") {
         std::cerr << "Expected first argument to be '-E'" << std::endl;
@@ -19,9 +19,7 @@ int main(int argc, char* argv[]) {
     std::string inputLine;
     std::getline(std::cin, inputLine);
 
-    PatternMatcher patternMatcher(inputLine, pattern);
-
-    bool doesMatch = patternMatcher.Match();
+    bool doesMatch = MatchPattern(inputLine, patternRaw);
     std::cout << (doesMatch ? "Match!" : "No match.") << std::endl;
 
     return !doesMatch;
