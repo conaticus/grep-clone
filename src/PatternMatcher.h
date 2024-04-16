@@ -11,5 +11,6 @@ private:
     const std::string pattern;
 
     bool matchDigits = false;
+    bool matchAlphaNumeric = false;
     char matchChar = '\0';
 };

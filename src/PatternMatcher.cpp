@@ -12,6 +12,7 @@ bool PatternMatcher::Match() {
 
         if (
             (matchDigits && isdigit(ch)) ||
+            (matchAlphaNumeric && isalnum(ch)) ||
             ch == matchChar
         )
             return true;
@@ -25,6 +26,9 @@ void PatternMatcher::ParseExpression(const std::string& expression) {
         switch (expression[1]) {
             case 'd':
                 matchDigits = true;
+                return;
+            case 'w':
+                matchAlphaNumeric = true;
                 return;
             default: break;
         }
