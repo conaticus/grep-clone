@@ -9,10 +9,11 @@ bool MatchPattern(const std::string& input, const std::string& patternRaw) {
     PatternParser parser(input, patternRaw);
     Pattern pattern = parser.Parse();
     for (char ch : input) {
+        // TODO: Handle string matching with pattern.matchString
+
         if (
             (pattern.matchDigits && isdigit(ch)) ||
-            (pattern.matchAlphaNumeric && isalnum(ch)) ||
-            (pattern.positiveCharGroup.find(ch) != pattern.positiveCharGroup.end())
+            (pattern.matchAlphaNumeric && isalnum(ch))
         )
             return true;
     }

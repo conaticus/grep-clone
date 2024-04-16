@@ -11,11 +11,14 @@ public:
 private:
     const std::string input;
     const std::string patternRaw;
+    Pattern pattern;
 
     size_t currentIdx = 0;
 
     char Next();
-    char Current();
+    char Current() const;
+    char Peek() const;
 
-    void ConsumeEscaped(char escapedChar, Pattern& pattern) const;
+    void ConsumeEscaped(char escapedChar);
+    void ConsumeString();
 };

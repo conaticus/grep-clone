@@ -3,20 +3,20 @@
 #include <iostream>
 
 Pattern PatternParser::Parse() {
-    Pattern pattern;
-
     char ch = Current();
     while (currentIdx < patternRaw.length()) {
         switch (ch) {
             case '\\':
             {
-                char escapedChar = patternRaw[++currentIdx];
-                ConsumeEscaped(escapedChar, pattern);
+                char escapedChar = Peek();
+                if (escapedChar == '\0') break;
+
+                ConsumeEscaped(escapedChar);
                 break;
             }
 
             default:
-                pattern.positiveCharGroup.insert(ch);
+                ConsumeString();
                 break;
         }
 
@@ -26,7 +26,22 @@ Pattern PatternParser::Parse() {
     return pattern;
 }
 
-void PatternParser::ConsumeEscaped(char escapedChar, Pattern& pattern) const {
+char PatternParser::Current() const {
+    return patternRaw[currentIdx];
+}
+
+char PatternParser::Next() {
+    return patternRaw[++currentIdx];
+}
+
+char PatternParser::Peek() const {
+    if (currentIdx + 1 > patternRaw.length() - 1)
+        return '\0';
+
+    return patternRaw[currentIdx + 1];
+}
+
+void PatternParser::ConsumeEscaped(char escapedChar) {
     switch (escapedChar) {
         case 'd':
             pattern.matchDigits = true;
@@ -34,18 +49,25 @@ void PatternParser::ConsumeEscaped(char escapedChar, Pattern& pattern) const {
         case 'w':
             pattern.matchAlphaNumeric = true;
             break;
-        default: 
-            // If not a valid escape character, just append the slash and character into the positive char group.
-            pattern.positiveCharGroup.insert('\\');
-            pattern.positiveCharGroup.insert(escapedChar);
-            break;
+        default:
+            // If not a valid escape character, just append the slash and character into the string match.
+            ConsumeString();
+            return;
     }
+
+    // Only move forward if it was a valid escape character, otherwise this will be done anyway inside ConsumeString function
+    Next();
 }
 
-char PatternParser::Current() {
-    return patternRaw[currentIdx];
-}
+void PatternParser::ConsumeString() {
+    int startIdx = currentIdx;
+    int stringLength = 0;
 
-char PatternParser::Next() {
-    return patternRaw[++currentIdx];
+    char ch = Current();
+    while (isalnum(ch)) {
+        stringLength++;
+        Next();
+    }
+
+    pattern.matchString = patternRaw.substr(startIdx, stringLength); 
 }
