@@ -32,7 +32,6 @@ private:
 
     char Next();
     char Current() const;
-    char Peek() const;
     bool IsAtEnd() const;
 
     void PushToken(TokenType type);

@@ -8,7 +8,7 @@ std::vector<PatternToken> PatternParser::Parse() {
         switch (ch) {
             case '\\':
             {
-                char escapedChar = Peek();
+                char escapedChar = Next();
                 if (escapedChar == '\0') break; // Already at last character in the input string
 
                 ConsumeEscaped(escapedChar);
@@ -32,13 +32,6 @@ char PatternParser::Current() const {
 
 char PatternParser::Next() {
     return pattern[++currentIdx];
-}
-
-char PatternParser::Peek() const {
-    if (IsAtEnd())
-        return '\0';
-
-    return pattern[currentIdx + 1];
 }
 
 bool PatternParser::IsAtEnd() const {
@@ -65,9 +58,5 @@ void PatternParser::ConsumeEscaped(char escapedChar) {
             // If not a valid escape character, just append the slash and character into the pattern tokens
             PushToken('\\');
             PushToken(escapedChar);
-            return;
     }
-
-    // Only move forward if it was a valid escape character, otherwise this will be done anyway inside Consumer functions function
-    Next();
 }
