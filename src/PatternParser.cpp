@@ -4,12 +4,12 @@
 
 Pattern PatternParser::Parse() {
     char ch = Current();
-    while (currentIdx < patternRaw.length()) {
+    while (!IsAtEnd()) {
         switch (ch) {
             case '\\':
             {
                 char escapedChar = Peek();
-                if (escapedChar == '\0') break;
+                if (escapedChar == '\0') break; // Already at last character in the input string
 
                 ConsumeEscaped(escapedChar);
                 break;
@@ -35,10 +35,14 @@ char PatternParser::Next() {
 }
 
 char PatternParser::Peek() const {
-    if (currentIdx + 1 > patternRaw.length() - 1)
+    if (IsAtEnd())
         return '\0';
 
     return patternRaw[currentIdx + 1];
+}
+
+bool PatternParser::IsAtEnd() const {
+    return currentIdx >= patternRaw.length();
 }
 
 void PatternParser::ConsumeEscaped(char escapedChar) {
@@ -64,7 +68,7 @@ void PatternParser::ConsumeString() {
     int stringLength = 0;
 
     char ch = Current();
-    while (isalnum(ch)) {
+    while (isalnum(ch) && IsAtEnd()) {
         stringLength++;
         Next();
     }

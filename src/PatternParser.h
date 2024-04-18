@@ -18,6 +18,7 @@ private:
     char Next();
     char Current() const;
     char Peek() const;
+    bool IsAtEnd() const;
 
     void ConsumeEscaped(char escapedChar);
     void ConsumeString();
