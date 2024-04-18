@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include "Pattern.h"
+#include "PatternMatcher.h"
 
 int main(int argc, char* argv[]) {
     if (argc != 3) {
@@ -19,7 +19,9 @@ int main(int argc, char* argv[]) {
     std::string inputLine;
     std::getline(std::cin, inputLine);
 
-    bool doesMatch = MatchPattern(inputLine, patternRaw);
+    PatternMatcher matcher(inputLine, patternRaw);
+
+    bool doesMatch = matcher.Match();
     std::cout << (doesMatch ? "Match!" : "No match.") << std::endl;
 
     return !doesMatch;

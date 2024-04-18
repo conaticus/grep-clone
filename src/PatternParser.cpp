@@ -1,8 +1,8 @@
 #include "PatternParser.h"
-#include "Pattern.h"
+#include "PatternMatcher.h"
 #include <iostream>
 
-Pattern PatternParser::Parse() {
+std::vector<PatternToken> PatternParser::Parse() {
     char ch = Current();
     while (!IsAtEnd()) {
         switch (ch) {
@@ -16,62 +16,58 @@ Pattern PatternParser::Parse() {
             }
 
             default:
-                ConsumeString();
+                PushToken(ch);
                 break;
         }
 
         ch = Next();
     }
     
-    return pattern;
+    return patternTokens;
 }
 
 char PatternParser::Current() const {
-    return patternRaw[currentIdx];
+    return pattern[currentIdx];
 }
 
 char PatternParser::Next() {
-    return patternRaw[++currentIdx];
+    return pattern[++currentIdx];
 }
 
 char PatternParser::Peek() const {
     if (IsAtEnd())
         return '\0';
 
-    return patternRaw[currentIdx + 1];
+    return pattern[currentIdx + 1];
 }
 
 bool PatternParser::IsAtEnd() const {
-    return currentIdx >= patternRaw.length();
+    return currentIdx >= pattern.length();
+}
+
+void PatternParser::PushToken(TokenType type) {
+    patternTokens.push_back(PatternToken(type));
+}
+
+void PatternParser::PushToken(char character) {
+    patternTokens.push_back(PatternToken(character));
 }
 
 void PatternParser::ConsumeEscaped(char escapedChar) {
     switch (escapedChar) {
         case 'd':
-            pattern.matchDigits = true;
+            PushToken(Digit);
             break;
         case 'w':
-            pattern.matchAlphaNumeric = true;
+            PushToken(Alphanumeric);
             break;
         default:
-            // If not a valid escape character, just append the slash and character into the string match.
-            ConsumeString();
+            // If not a valid escape character, just append the slash and character into the pattern tokens
+            PushToken('\\');
+            PushToken(escapedChar);
             return;
     }
 
-    // Only move forward if it was a valid escape character, otherwise this will be done anyway inside ConsumeString function
+    // Only move forward if it was a valid escape character, otherwise this will be done anyway inside Consumer functions function
     Next();
-}
-
-void PatternParser::ConsumeString() {
-    int startIdx = currentIdx;
-    int stringLength = 0;
-
-    char ch = Current();
-    while (isalnum(ch) && IsAtEnd()) {
-        stringLength++;
-        Next();
-    }
-
-    pattern.matchString = patternRaw.substr(startIdx, stringLength); 
 }
