@@ -39,6 +39,9 @@ bool PatternMatcher::MatchToken(char ch, const PatternToken& token) const {
         case PositiveGroup:
             return token.positiveCharGroup.find(ch) != token.positiveCharGroup.end();
             break;
+        case NegativeGroup:
+            return token.positiveCharGroup.find(ch) == token.positiveCharGroup.end();
+            break;
         default: break;
     }
 
