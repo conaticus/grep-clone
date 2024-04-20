@@ -1,6 +1,7 @@
 #include "PatternParser.h"
 #include "PatternMatcher.h"
 #include <iostream>
+#include <unordered_set>
 
 std::vector<PatternToken> PatternParser::Parse() {
     char ch = Current();
@@ -15,6 +16,17 @@ std::vector<PatternToken> PatternParser::Parse() {
                 break;
             }
 
+            case '[':
+            {
+                bool isPositive = Peek() != '^';
+                if (!isPositive)
+                    Next();
+                
+                std::unordered_set<char> charGroup = ConsumeCharGroup();
+                PushToken(isPositive ? PositiveGroup : NegativeGroup, charGroup);
+                break;
+            }
+
             default:
                 PushToken(ch);
                 break;
@@ -26,13 +38,18 @@ std::vector<PatternToken> PatternParser::Parse() {
     return patternTokens;
 }
 
+char PatternParser::Next() {
+    return pattern[++currentIdx];
+}
+
+char PatternParser::Peek() const {
+    return pattern[currentIdx + 1];
+}
+
 char PatternParser::Current() const {
     return pattern[currentIdx];
 }
 
-char PatternParser::Next() {
-    return pattern[++currentIdx];
-}
 
 bool PatternParser::IsAtEnd() const {
     return currentIdx >= pattern.length();
@@ -44,6 +61,16 @@ void PatternParser::PushToken(TokenType type) {
 
 void PatternParser::PushToken(char character) {
     patternTokens.push_back(PatternToken(character));
+}
+
+void PatternParser::PushToken(TokenType type, const std::unordered_set<char>& groupSet) {
+    PatternToken token(type);
+    if (type == PositiveGroup)
+        token.positiveCharGroup = groupSet;
+    else
+        token.negativeCharGroup = groupSet;
+    
+    patternTokens.push_back(token);
 }
 
 void PatternParser::ConsumeEscaped(char escapedChar) {
@@ -59,4 +86,17 @@ void PatternParser::ConsumeEscaped(char escapedChar) {
             PushToken('\\');
             PushToken(escapedChar);
     }
+}
+
+std::unordered_set<char> PatternParser::ConsumeCharGroup() {
+    char current = Next();
+    std::unordered_set<char> charGroupSet;
+
+    // TODO: Handle when closing ']' bracket is not provided.
+    while (current != ']' && !IsAtEnd()) {
+        charGroupSet.insert(current);
+        current = Next();
+    }
+
+    return charGroupSet;
 }
